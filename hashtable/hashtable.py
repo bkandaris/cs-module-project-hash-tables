@@ -23,7 +23,8 @@ class HashTable:
         self.capacity = capacity  
         self.storage = [None] * (capacity)
         self.size = 0
-
+        self.max_load_factor = 0.7
+        self.min_load_factor = 0.2
 
 
     def get_num_slots(self):
@@ -59,12 +60,12 @@ class HashTable:
         DJB2 hash, 32-bit
         Implement this, and/or FNV-1.
         """
-        hash = 5381
+        hash = 777
 
         # loop through each character in key
         for char in key:
             # multiplies hash value by 33 and adds integer representation of character
-            hash = (hash * 33) + ord(char)
+            hash = (hash * 777) + ord(char)
         return hash
 
 
