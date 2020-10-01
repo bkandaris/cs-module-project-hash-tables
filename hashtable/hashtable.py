@@ -23,8 +23,7 @@ class HashTable:
         self.capacity = capacity  
         self.storage = [None] * (capacity)
         self.size = 0
-        self.max_load_factor = 0.7
-        self.min_load_factor = 0.2
+
 
 
     def get_num_slots(self):
