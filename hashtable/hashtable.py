@@ -16,12 +16,15 @@ class HashTable:
     """
     A hash table that with `capacity` buckets
     that accepts string keys
-
     Implement this.
     """
 
     def __init__(self, capacity):
-        # Your code here
+        self.capacity = capacity  
+        self.storage = [None] * (capacity)
+        self.size = 0
+        self.max_load_factor = 0.7
+        self.min_load_factor = 0.2
 
 
     def get_num_slots(self):
@@ -29,27 +32,23 @@ class HashTable:
         Return the length of the list you're using to hold the hash
         table data. (Not the number of items stored in the hash table,
         but the number of slots in the main list.)
-
         One of the tests relies on this.
-
         Implement this.
         """
-        # Your code here
+        return len(self.storage)
 
 
     def get_load_factor(self):
         """
         Return the load factor for this hash table.
-
         Implement this.
         """
-        # Your code here
+        return self.size / self.capacity if self.size > 0 else 0
 
 
     def fnv1(self, key):
         """
         FNV-1 Hash, 64-bit
-
         Implement this, and/or DJB2.
         """
 
@@ -59,10 +58,15 @@ class HashTable:
     def djb2(self, key):
         """
         DJB2 hash, 32-bit
-
         Implement this, and/or FNV-1.
         """
-        # Your code here
+        hash = 5381
+
+        # loop through each character in key
+        for char in key:
+            # multiplies hash value by 33 and adds integer representation of character
+            hash = (hash * 33) + ord(char)
+        return hash
 
 
     def hash_index(self, key):
@@ -76,35 +80,72 @@ class HashTable:
     def put(self, key, value):
         """
         Store the value with the given key.
-
         Hash collisions should be handled with Linked List Chaining.
-
         Implement this.
         """
-        # Your code here
+        index = self.hash_index(key)
+        self.size += 1
+        # item does not exist
+        if self.storage[index] is None:
+            self.storage[index] = HashTableEntry(key, value)
+        else:
+            node = self.storage[index]
+            while node:
+                if node.key == key:
+                    node.value = value
+                    return
+                elif node.next:
+                    node = node.next
+                else:
+                    node.next = HashTableEntry(key, value)
+                    return
 
 
     def delete(self, key):
         """
         Remove the value stored with the given key.
-
         Print a warning if the key is not found.
-
         Implement this.
         """
-        # Your code here
+        index = self.hash_index(key)
+        
+        if self.storage[index]:
+
+            self.size -= 1
+
+            if self.storage[index].key == key:
+                if self.storage[index].next is not None:
+                    self.storage[index] = self.storage[index].next
+                else:
+                    self.storage[index] = None
+            else:
+                node = self.storage[index]
+                while node.next:
+                    if node.next.key == key:
+                        node.next = None
+                    else:
+                        node = node.next
+        else:
+            print("not there")
 
 
     def get(self, key):
         """
         Retrieve the value stored with the given key.
-
         Returns None if the key is not found.
-
         Implement this.
         """
-        # Your code here
+        index = self.hash_index(key)
 
+        if self.storage[index]:
+            node = self.storage[index]
+            while node:
+                if node.key == key:
+                    return node.value
+                else:
+                    node = node.next
+        else:
+            return self.storage[index]
 
     def resize(self, new_capacity):
         """
